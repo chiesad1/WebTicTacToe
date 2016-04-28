@@ -1,5 +1,9 @@
 var video_hold = document.getElementById("video-chat");
 var video_out = document.getElementById("vid-box");
+var game_board = document.getElementById("tic-tac-box");
+var user_name = "";
+
+var game_board = ticTacToe(game_board);
 
 function login(form) {
 	user_name = form.username.value || "Anonymous";
@@ -30,4 +34,24 @@ function end(){
 	if (!window.phone) return;
 	window.phone.hangup();
 	video_hold.hidden = true;
+}
+
+game_board.onSquareClicked(
+		function(squareNum){ //Says which box was clicked
+			if (!window.phone) return;
+			var data = {square:squareNum, username:user_name};
+			window.phone.sendData(data);	
+		}
+	)
+
+function onDataReceived(msg){
+	var sqr_num = msg.square;
+	game_board.markBox(sqr_num);
+}
+
+function login(form) {
+	//Sets up phone
+	//Ready and receives callbacks
+	phone.datachannel(onDataReceived);
+	return false;
 }
